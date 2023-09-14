@@ -8,38 +8,48 @@ var app = http.createServer(function (request, response) {
   var title = queryData.id;
   var pathName = url.parse(_url, true).pathname;
 
-  console.log(url.parse(_url, true));
-
+  var description = '';
   if (pathName === '/') {
-    //파일 읽어오는 부분
-    fs.readFile(`data/${title}`, 'utf8', (err, data) => {
-      if (err) {
-      } else {
-        var template = `
-    <!doctype html>
-    <html>
-    <head>
-      <title>WEB1 - ${title}</title>
-      <meta charset="utf-8">
-    </head>
-    <body>
-      <h1><a href="/">WEB</a></h1>
-      <ol>
-        <li><a href="/?id=HTML">HTML</a></li>
-        <li><a href="/?id=CSS">CSS</a></li>
-        <li><a href="/?id=JavaScript">JavaScript</a></li>
-      </ol>
-      <h2>${title}</h2>
-      <p><a href="https://www.w3.org/TR/html5/" target="_blank" title="html5 speicification">Hypertext Markup Language (HTML)</a> is the standard markup language for <strong>creating <u>web</u> pages</strong> and web applications.Web browsers receive HTML documents from a web server or from local storage and render them into multimedia web pages. HTML describes the structure of a web page semantically and originally included cues for the appearance of the document.
-      
-      </p><p style="margin-top:45px;">${data}ss</p>
-    </body>
-    </html>
-    `;
-        response.writeHead(200);
-        response.end(template);
-      }
-    });
+    //id값이 없다면 초기화면
+    if (title === undefined) {
+      title = 'WelCome';
+      description = 'Welcome hello Node.js';
+      sendPage();
+    } else {
+      // 그게 아니라면 파일 읽어오기
+      //파일 읽어오는 부분
+      fs.readFile(`data/${title}`, 'utf8', (err, data) => {
+        description = data;
+        console.log('데이터: ', description);
+        sendPage();
+      });
+    }
+
+    const sendPage = () => {
+      var template = `
+      <!doctype html>
+      <html>
+      <head>
+        <title>WEB1 - ${title}</title>
+        <meta charset="utf-8">
+      </head>
+      <body>
+        <h1><a href="/">WEB</a></h1>
+        <ol>
+          <li><a href="/?id=HTML">HTML</a></li>
+          <li><a href="/?id=CSS">CSS</a></li>
+          <li><a href="/?id=JavaScript">JavaScript</a></li>
+        </ol>
+        <h2>${title}</h2>
+       
+        </p><p style="margin-top:45px;">${description}</p>
+      </body>
+      </html>
+      `;
+
+      response.writeHead(200);
+      response.end(template);
+    };
   } else {
     response.writeHead(404);
     response.end('Not found');
