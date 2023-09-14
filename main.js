@@ -102,9 +102,12 @@ var app = http.createServer(function (request, response) {
       var post = qs.parse(body);
       var title = post.title;
       var description = post.description;
+
+      fs.writeFile(`data/${title}`, description, 'utf8', function (err) {
+        response.writeHead(302, { Location: `/?id=${title}` });
+        response.end('success');
+      });
     });
-    response.writeHead(200, { 'Content-Type': 'text/html' });
-    response.end('success');
   } else {
     response.writeHead(404, { 'Content-Type': 'text/plain' });
     response.end('Not Found');
