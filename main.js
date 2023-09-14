@@ -1,6 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
+var qs = require('querystring');
 var testFolder = './data/';
 function sendPage(response, title, description) {
   fs.readdir(testFolder, (err, fileList) => {
@@ -81,7 +82,7 @@ var app = http.createServer(function (request, response) {
             ${listItems.join('')}
           </ol>
           <a href="/create">create</a>
-          <form action="http://localhost:3000/process_create" method="post">
+          <form action="http://localhost:3000/create_process" method="post">
             <p><input type="text" name="title" placeholder="title"></p>
             <p><textarea name="description" placeholder="description"></textarea></p>
             <p><input type="submit"></p>
@@ -92,6 +93,18 @@ var app = http.createServer(function (request, response) {
       response.writeHead(200, { 'Content-Type': 'text/html' });
       response.end(template);
     });
+  } else if (pathName === '/create_process') {
+    var body = '';
+    request.on('data', function (data) {
+      body = body + data;
+    });
+    request.on('end', function () {
+      var post = qs.parse(body);
+      var title = post.title;
+      var description = post.description;
+    });
+    response.writeHead(200, { 'Content-Type': 'text/html' });
+    response.end('success');
   } else {
     response.writeHead(404, { 'Content-Type': 'text/plain' });
     response.end('Not Found');
