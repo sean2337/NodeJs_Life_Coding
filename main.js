@@ -12,7 +12,7 @@ var app = http.createServer(function (request, response) {
   if (pathName === '/') {
     //id값이 없다면 초기화면
     if (title === undefined) {
-      title = 'WelCome';
+      title = 'Welcome';
       description = 'Welcome hello Node.js';
       sendPage();
     } else {
@@ -20,36 +20,41 @@ var app = http.createServer(function (request, response) {
       //파일 읽어오는 부분
       fs.readFile(`data/${title}`, 'utf8', (err, data) => {
         description = data;
-        console.log('데이터: ', description);
         sendPage();
       });
     }
 
-    const sendPage = () => {
-      var template = `
-      <!doctype html>
-      <html>
-      <head>
-        <title>WEB1 - ${title}</title>
-        <meta charset="utf-8">
-      </head>
-      <body>
-        <h1><a href="/">WEB</a></h1>
-        <ol>
-          <li><a href="/?id=HTML">HTML</a></li>
-          <li><a href="/?id=CSS">CSS</a></li>
-          <li><a href="/?id=JavaScript">JavaScript</a></li>
-        </ol>
-        <h2>${title}</h2>
-       
-        </p><p style="margin-top:45px;">${description}</p>
-      </body>
-      </html>
-      `;
-
-      response.writeHead(200);
-      response.end(template);
-    };
+    function sendPage() {
+      var testFolder = './data/';
+      fs.readdir(testFolder, (err, fileList) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        var listItems = fileList.map(
+          (element) => `<li><a href="/?id=${element}">${element}</a></li>`
+        );
+        var template = `
+          <!doctype html>
+          <html>
+          <head>
+            <title>WEB1 - ${title}</title>
+            <meta charset="utf-8">
+          </head>
+          <body>
+            <h1><a href="/">WEB</a></h1>
+            <ol>
+              ${listItems.join('')}
+            </ol>
+            <h2>${title}</h2>
+            <p>${description}</p>
+          </body>
+          </html>
+        `;
+        response.writeHead(200);
+        response.end(template);
+      });
+    }
   } else {
     response.writeHead(404);
     response.end('Not found');
