@@ -83,7 +83,7 @@ var app = http.createServer(function (request, response) {
             ${listItems.join('')}
           </ol>
           <a href="/create">create</a>
-          <form action="http://localhost:3000/create_process" method="post">
+          <form action="/create_process" method="post">
             <p><input type="text" name="title" placeholder="title"></p>
             <p><textarea name="description" placeholder="description"></textarea></p>
             <p><input type="submit"></p>
@@ -109,6 +109,27 @@ var app = http.createServer(function (request, response) {
         response.end('success');
       });
     });
+  } else if (pathName === '/update') {
+    //////
+    fs.readdir(testFolder, (err, fileList) => {
+      fs.readFile(`data/${queryData.id}`, 'utf8', function (err, description) {
+        var listItems = fileList.map(
+          (element) => `<li><a href="/?id=${element}">${element}</a></li>`
+        );
+        var template = `
+            <h1><a href="/">Update</a></h1>
+            <form action="/update_process" method="post">
+            <p><input type="text" name="id" hidden value="${title}"></p>
+            <p><input type="text" name="title" placeholder="title" value="${title}"></p>
+            <p><textarea name="description" placeholder="description">${description}</textarea></p>
+            <p><input type="submit"></p>
+          </form>
+        `;
+        response.writeHead(200, { 'Content-Type': 'text/html' });
+        response.end(template);
+      });
+    });
+    ///////
   } else {
     response.writeHead(404, { 'Content-Type': 'text/plain' });
     response.end('Not Found');
