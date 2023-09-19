@@ -27,6 +27,7 @@ function sendPage(response, title, description) {
           ${listItems.join('')}
         </ol>
         <a href="/create">create</a>
+        <a href="/update?id=${title}">update</a>
         <h2>${title}</h2>
         <p>${description}</p>
       </body>
